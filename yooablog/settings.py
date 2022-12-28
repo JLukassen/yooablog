@@ -9,14 +9,14 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
-from dotenv import load_dotenv
+
 import os
-
-load_dotenv()
 from pathlib import Path
-
+from os import getenv
+###load_dotenv(dotenv_path)
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+#BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 # Quick-start development settings - unsuitable for production
@@ -26,16 +26,25 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['66.29.141.225',
-		 'www.kpopalypsenow.com',
-		 'kpopalypsenow.com']
+#ALLOWED_HOSTS = ['66.29.141.225',
+#		 'www.kpopalypsenow.com',
+#		 'kpopalypsenow.com']
+
+ALLOWED_HOSTS = [
+    '127.0.0.1'
+    'localhost',
+    '*',
+]
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'blog.apps.BlogConfig',
+    'users.apps.UsersConfig',
+    #'crispy_forms',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -84,12 +93,12 @@ DATABASES = {
         'NAME': os.getenv('NAME'),
         'USER': os.getenv('USER'),
         'PASSWORD': os.getenv('PASSWORD'),
+        'PORT': '3306',
         'HOST': os.getenv('HOST'),
-        'PORT': os.getenv('PORT'),
     }
 }
 
-
+DATABASE_URL= os.getenv('DATABASE_URL')
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 
@@ -120,9 +129,13 @@ USE_I18N = True
 
 USE_TZ = True
 
+USE_L10N = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
 
 STATIC_URL = 'static/'
 STATIC_ROOT = '/home/leserafim/yooablog/static'
@@ -130,3 +143,6 @@ STATIC_ROOT = '/home/leserafim/yooablog/static'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGIN_REDIRECT_URL = 'blog-home'
+LOGIN_URL = 'login'
