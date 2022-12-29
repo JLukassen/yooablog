@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 import os
 from pathlib import Path
-from os import getenv
 ###load_dotenv(dotenv_path)
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 #BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,16 +25,17 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+#DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'False'
+DEBUG = True;
 
 #ALLOWED_HOSTS = ['66.29.141.225',
 #		 'www.kpopalypsenow.com',
 #		 'kpopalypsenow.com']
 
 ALLOWED_HOSTS = [
-    '127.0.0.1'
+    '127.0.0.1',
     'localhost',
-    '*',
+    '127.0.0.1:8000',
 ]
 
 
@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     'blog.apps.BlogConfig',
     'users.apps.UsersConfig',
     'crispy_forms',
+    "debug_toolbar",
+    'debug_panel',
     'django_extensions',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -59,6 +61,9 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'debug_panel.middleware.DebugPanelMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -88,18 +93,32 @@ WSGI_APPLICATION = 'yooablog.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.mysql',
+#        'NAME': os.getenv('NAME'),
+#        'USER': os.getenv('USER'),
+#        'PASSWORD': os.getenv('PASSWORD'),
+#        'PORT': '3306',
+#        'HOST': os.getenv('HOST'),
+#    }
+#}
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': os.getenv('NAME'),
         'USER': os.getenv('USER'),
         'PASSWORD': os.getenv('PASSWORD'),
-        'PORT': '3306',
         'HOST': os.getenv('HOST'),
+        'PORT': '3306',
+        'OPTIONS': {
+            'read_default_file': '/home/yoo__sha.stan/Downloads/kpopalypsenow/yooablog/yooablog/my.cnf',
+            'sql_mode': 'traditional',
+        },
     }
 }
 
-DATABASE_URL= os.getenv('DATABASE_URL')
+#DATABASE_URL= os.getenv('DATABASE_URL')
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 
@@ -119,8 +138,40 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION': '127.0.0.1:11211',
+    },
+
+    # this cache backend will be used by django-debug-panel
+    'debug-panel': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': '/var/tmp/debug-panel-cache',
+        'OPTIONS': {
+            'MAX_ENTRIES': '200'
+        },
+    },
+}
+
+LOGGING = {
+    'handlers': {
+        'console' : {
+            'level' : 'DEBUG',
+            'class' : 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'werkzeug': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
+
 # Internationalization
-# https://docs.djangoproject.com/en/4.1/topics/i18n/
+# https://docs.djangoproject.com/en/NAME='leserafim_kpopalypsenow'4.1/topics/i18n/
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
@@ -138,7 +189,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 STATIC_URL = 'static/'
-STATIC_ROOT = '/home/leserafim/yooablog/static'
+STATIC_ROOT = '/home/leserafim/public_html/yooablog/static'
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
