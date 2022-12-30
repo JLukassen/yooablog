@@ -26,7 +26,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 #DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'False'
-DEBUG = True;
+DEBUG = True
 
 #ALLOWED_HOSTS = ['66.29.141.225',
 #		 'www.kpopalypsenow.com',
@@ -38,6 +38,11 @@ ALLOWED_HOSTS = [
     '127.0.0.1:8000',
 ]
 
+INTERNAL_IPS = [
+    # ...
+    "127.0.0.1",
+    # ...
+]
 
 # Application definition
 
@@ -61,7 +66,6 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'debug_panel.middleware.DebugPanelMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
